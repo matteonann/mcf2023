@@ -1,0 +1,224 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import matplotlib.colors as color
+from scipy import integrate
+import argparse
+import sys,os
+
+xx = np.arange(-5,5.05, 0.1)
+#plt.plot(xx, 0.1*xx**6, color='teal')
+#plt.axvline(color='k', linewidth=0.5)
+#plt.xlabel('x')
+#plt.ylabel(r'V(x)')
+#plt.plot(4.5, 0.1*4.5**6, 'o', markersize=12, color='indianred')
+#plt.show()
+
+
+
+def parse_arguments():
+    
+    parser = argparse.ArgumentParser(description='Esempio utilizzo argarse.',
+                                     usage      ='python3 Esercizio_2.py  --opzione')
+    parser.add_argument('-6', '--opzione1',    action='store_true',                          help='Potenziale x^6')
+    parser.add_argument('-2', '--opzione2',    action='store_true',
+            help='Potenziale x^2?')
+    parser.add_argument('-4', '--opzione3',    action='store_true',
+            help='Potenziale x^4?')
+    parser.add_argument('-32', '--opzione4',    action='store_true',
+            help='Potenziale x^3/2?')
+    return  parser.parse_args()
+
+
+xx = np.arange(-5,5.05, 0.1)
+distanze = xx[xx>=0]
+
+
+#V = 0.1*distanze**6
+
+#periodi = []
+#for i in range(3, len(distanze)+1):
+#    V_0 = 0.1*distanze[i-1]**6
+#    integranda = np.sqrt(8*m)*1/np.sqrt(V_0-V)
+#    print(integranda[:i-1])
+#    periodi.append(integrate.simpson(integranda[:i-1], x = distanze[:i-1], dx = 3))
+
+
+#print(periodi)
+    
+#plt.plot(distanze[2:], periodi, color='teal')
+#plt.xlabel('x0 (m)')
+#plt.ylabel('T (s)')
+#plt.show()
+    
+#print(periodi)
+    
+#V_1 = 0.1*distanze**2
+
+#periodi_1 = []
+#for i in range(3, len(distanze)+1):
+#    V_0 = 0.1*distanze[i-1]**2
+#    integranda = np.sqrt(8*m)*1/np.sqrt(V_0-V_1)
+#    print(integranda[:i-1])
+#    periodi_1.append(integrate.simpson(integranda[:i-1], x = distanze[:i-1], dx = 0.1))
+
+
+#print(periodi_1)
+    
+#plt.plot(distanze[2:], periodi_1, color='teal')
+#plt.xlabel('x0 (m)')
+#plt.ylabel('T (s)')
+#plt.show()
+    
+#print(periodi_1)
+
+
+#def V(x, k, esp):
+#    return k * x ** esp
+
+
+#def grafico_periodi(dist, esp, k, m):
+#    periodi = []
+#    for i in range(2, len(dist)):
+#        x_0 = dist[i]
+#        interv = np.arange(0, x_0 * 10000-1, 0.1)/10000
+#        V_0 = V(x_0, k, esp)
+        #integranda = np.sqrt(8*m)*1/np.sqrt(V_0-V(interv, k, esp))
+        #print(integranda[:i])
+        #integ = integrate.simpson(integranda, x = interv, dx = 0.0001)
+        #periodi.append(integ)
+        #print(integ)
+#        def integrand(x):
+#            return np.sqrt(8*m)*1/np.sqrt(V_0-V(x, k, esp))
+#        integ = integrate.simpson(integrand(interv), dx = 0.1/10000)
+#        periodi.append(integ)
+#    plt.plot(dist[2:], periodi, color='teal')
+#    plt.xlabel('x0 (m)')
+#    plt.ylabel('T (s)')
+#    plt.show()
+    
+
+def V(x, k, esp):
+    return k * x ** esp
+
+def periodi(dist, esp, k, m):
+    periodi = []
+    for i in range(1, len(dist)):
+        x_0 = dist[i]
+        interv = np.arange(0, x_0 * 100000, 0.1)/100000
+#        print(len(interv))
+        V_0 = V(x_0, k, esp)
+#        def integrand(x):
+#            return 4*np.sqrt(8*m)*1/np.sqrt(V_0-V(x, k, esp))
+#        integ = integrate.simpson(integrand(interv), dx = 0.1/10000)
+#        periodi.append(integ)
+        integranda = 4*np.sqrt(8*m)*1/np.sqrt(V_0-V(interv, k, esp))
+        integ = integrate.simpson(integranda, dx = 0.1/100000)
+        periodi.append(integ)
+    return periodi
+
+
+def grafico(x, esp, k):
+    plt.plot(x, V(x, k, esp), color='teal')
+    plt.axvline(color='k', linewidth=0.5)
+    plt.xlabel('x')
+    plt.ylabel(r'V(x)')
+    plt.plot(4.5, V(4.5,k, esp) , 'o', markersize=12, color='indianred')
+    plt.show()
+
+
+k = 100
+esp_2 = 2
+esp_6 = 6
+esp_4 = 4
+esp_32 = 3/2
+m = 0.5
+
+def grafici():
+
+    args = parse_arguments()
+
+    # print 
+    #print(args)
+
+    #if args.opzione1 == True:
+    #    print('---------------------------------------------')
+    #    print('   Opzione 1 = True')
+    #    print('---------------------------------------------')
+
+    
+    
+    if args.opzione1 == True:
+
+        grafico(xx, esp_6, k)
+        per_6 = periodi(distanze, esp_6, k, m)
+        plt.plot(distanze[1:], per_6, color='teal', label = '6')
+        plt.xlabel('x0 (m)')
+        plt.ylabel('T (s)')
+        plt.legend()
+        plt.show()
+
+        
+    if args.opzione2 == True:
+
+        grafico(xx, esp_2, k)
+        per_2 = periodi(distanze, esp_2, k, m)
+        plt.plot(distanze[1:], per_2, color='indianred', label = '2')
+        plt.xlabel('x0 (m)')
+        plt.ylabel('T (s)')
+        plt.legend()
+        plt.show()
+
+        
+    if args.opzione3 == True:
+
+        grafico(xx, esp_4, k)
+        per_4 = periodi(distanze, esp_4, k, m)
+        plt.plot(distanze[1:], per_4, color='royalblue', label = '4')
+        plt.xlabel('x0 (m)')
+        plt.ylabel('T (s)')
+        plt.legend()
+        plt.show()
+
+
+    if args.opzione4 == True:
+
+        grafico(distanze, esp_32, k)
+        per_32 = periodi(distanze, esp_32, k, m)
+        plt.plot(distanze[1:], per_32, color='springgreen', label = '3/2')
+        plt.xlabel('x0 (m)')
+        plt.ylabel('T (s)')
+        plt.legend()
+        plt.show()
+
+
+#per_6 = periodi(distanze, esp_6, k, m)
+#per_2 = periodi(distanze, esp_2, k, m)
+#per_4 = periodi(distanze, esp_4, k, m)
+#per_32 = periodi(distanze, esp_32, k, m)
+
+#plt.plot(distanze[1:], per_6, color='springgreen', label = '3/2')
+#plt.plot(distanze[1:], per_2, color='springgreen', label = '3/2')
+#plt.plot(distanze[1:], per_4, color='springgreen', label = '3/2')
+#plt.plot(distanze[1:], per_32, color='springgreen', label = '3/2')
+#plt.xlabel('x')
+#plt.ylabel(r'V(x)')
+#plt.show()
+    
+#grafico_periodi(distanze, esp, k, m)
+
+
+
+
+
+        #integranda = np.sqrt(8*m)*1/np.sqrt(V_0-V(interv, k, esp))
+        #print(integranda[:i])
+        #integ = integrate.simpson(integranda, x = interv, dx = 0.0001)
+        #periodi.append(integ)
+        #print(integ)
+
+
+        
+if __name__ == "__main__":
+
+    grafici()
